@@ -1,116 +1,99 @@
 # SL2000-Next
 
-![SL2000-Next Logo](docs/logo.png)
-
-[![Estado del Build](https://img.shields.io/github/actions/workflow/status/TU_USUARIO/SL2000-Next/main.yml?branch=main&style=for-the-badge)](https://github.com/TU_USUARIO/SL2000-Next/actions)
-[![Cobertura de Código](https://img.shields.io/codecov/c/github/TU_USUARIO/SL2000-Next?style=for-the-badge)](https://codecov.io/gh/TU_USUARIO/SL2000-Next)
-[![Issues Abiertas](https://img.shields.io/github/issues/TU_USUARIO/SL2000-Next?style=for-the-badge)](https://github.com/TU_USUARIO/SL2000-Next/issues)
-[![Licencia](https://img.shields.io/github/license/TU_USUARIO/SL2000-Next?style=for-the-badge)](LICENSE)
-
-> **Nota:** No olvides reemplazar `TU_USUARIO` en las URLs de los badges con tu nombre de usuario de GitHub.
-
----
+![SL2000-Next Logo](docs/logo.png)  <!-- opcional si tienes logo -->
 
 ## 🚀 Objetivo del proyecto
-SL2000-Next es un sistema logístico integral inspirado en el **SL2000 del Ejército del Aire**, modernizado con arquitectura modular, segura y escalable.  
-Su propósito es gestionar inventario, mantenimiento, aprovisionamiento y trazabilidad de equipos de manera eficiente.
+**SL2000-Next** es una reconstrucción técnica moderna del **SL2000** (Sistema de Gestión Logística Integrado del Ejército del Aire y del Espacio, España).  
+El objetivo es modelar y prototipar la funcionalidad operativa del SL2000/SL2000E usando tecnologías actuales (Node.js, PostgreSQL, React, Docker), con énfasis en:
+
+- Gestión de inventario (NSN / P/N / S/N), reparables y trazabilidad.
+- Órdenes de trabajo y mantenimiento por número de serie.
+- Ciclo de aprovisionamiento y compras.
+- Arquitectura distribuida (nodo central + nodos locales) con sincronización.
+- Seguridad, auditoría y cumplimiento normativo (PECAL / ENS como referencia).
+
+> Nota: SL2000 es un sistema real con décadas de operación. Este repositorio implementa una **versión técnica/prototipo** que replica la lógica funcional (no acceso a datos clasificados ni integración con infraestructuras reales).
 
 ---
 
-## 🏗️ Arquitectura general
+## 🏛 Contexto histórico (resumen técnico)
+- SL2000 entró en servicio a finales de los años 90 para sustituir limitaciones del SND y centralizar la gestión logística de flotas y material.  
+- Arquitectura original: cliente/servidor (PowerBuilder), con múltiples bases de datos distribuidas (originalmente ~46 BD, creciendo a ~50+), replicación periódica y nodos locales.  
+- Estado: obsolescencia tecnológica por uso de tecnologías antiguas (PowerBuilder, Windows Server antiguas) y necesidad de migración a solución moderna (SL2000E).  
+- SL2000E: planificado para migración completa con arquitectura 3 capas, base de datos central Oracle, aplicación web Java y entrada en servicio prevista en el marco de modernización (hitos hasta 2026). SL2000E pretende 24x7 de disponibilidad, interoperabilidad con bases de datos conjuntas (ej.: NH90) y capacidad de incorporar tecnologías 4.0 (IA, Big Data, AR, 5G).
+
+---
+
+## 🏗️ Arquitectura técnica propuesta (SL2000-Next)
 - **Backend:** Node.js (TypeScript) + Express/Fastify  
 - **Frontend:** React + Vite  
-- **Base de datos:** PostgreSQL + Prisma ORM  
-- **Mensajería / sincronización:** RabbitMQ / Kafka  
-- **Autenticación:** OpenID Connect + Keycloak  
-- **Infraestructura:** Docker + Kubernetes + CI/CD  
-- **Documentación API:** OpenAPI 3.1  
+- **Base de datos:** PostgreSQL (esquema multi-tenant / particionado; posibilidad de réplica y sincronización)  
+- **Mensajería / sincronización:** Kafka o RabbitMQ para replicación y colas de eventos entre nodos  
+- **Autenticación:** OpenID Connect / JWT + MFA; RBAC por roles (Administrador, Técnico, Operador, Invitado)  
+- **Infra:** Docker + Kubernetes (manifests/Helm) + GitHub Actions para CI/CD  
+- **Observability:** Prometheus + Grafana + ELK/Opensearch para logs y auditoría inmutable  
+- **Testing:** Jest + Supertest (backend), Vitest (frontend)
 
 ---
 
 ## 📂 Estructura de carpetas sugerida
-```bash
 SL2000-Next/
 │
-├─ backend/ # Código del servidor
+├─ backend/
 │ ├─ src/
 │ ├─ tests/
-│ └─ package.json
+│ └─ Dockerfile
 │
-├─ frontend/ # Aplicación web React
+├─ frontend/
 │ ├─ src/
-│ ├─ public/
-│ └─ package.json
+│ └─ Dockerfile
 │
-├─ docs/ # Documentación técnica y diagramas
+├─ docs/ # Diagramas, pliegos y referencias
 │ ├─ architecture.md
 │ ├─ data_model.png
-│ └─ README.md
+│ └─ SL2000_references.md # resumen de SL2000/SL2000E incorporado
 │
-├─ openapi/ # Especificaciones API
+├─ openapi/
 │ └─ openapi.yaml
 │
-├─ infra/ # Docker, Kubernetes y CI/CD
-│ ├─ docker-compose.yml
-│ └─ kubernetes/
-```
+├─ infra/
+│ └─ docker-compose.yml
+│
+├─ project_issues/
+│ └─ SL2000-Next_Issues.docx
+│
+├─ agent.yaml
+├─ agent.md
+├─ prompt_master.txt
+└─ README.md
+
+yaml
+Copiar código
 
 ---
 
-## 🛠️ Cómo empezar
+## ⚙️ Cómo usar (rápido)
+1. Clona el repositorio:
+   ```bash
+   git clone https://github.com/TU_USUARIO/SL2000-Next.git
+   cd SL2000-Next
+Arranca con Docker Compose (plantilla inicial en /infra):
 
-### Prerrequisitos
-- Docker y Docker Compose
-- Node.js (versión recomendada: 20.x o superior)
-- Git
+bash
+Copiar código
+docker-compose up --build
+Backend: http://localhost:3000
+Frontend: http://localhost:5173
 
-### Instalación y ejecución
-1.  **Clona el repositorio:**
-    ```bash
-    git clone https://github.com/TU_USUARIO/SL2000-Next.git
-    cd SL2000-Next
-    ```
+🗂 Issues por Sprint
+El desarrollo está organizado por sprints (0–6). Consulta project_issues/SL2000-Next_Issues.docx para copiar/pegar las tareas en GitHub Issues.
 
-2.  **Levanta los servicios con Docker Compose:**
-    ```bash
-    docker-compose up --build
-    ```
+🔐 Seguridad y cumplimiento
+Este prototipo no conecta con sistemas reales ni datos clasificados.
 
-3.  **Accede a los servicios:**
-    - **Backend:** `http://localhost:3000`
-    - **Frontend:** `http://localhost:5173`
+En un despliegue real se deben cumplir normas aplicables (PECAL, Esquema Nacional de Seguridad (ENS), y otras políticas MINISDEF).
 
----
-
-## 🗂️ Gestión de Tareas (Issues)
-El desarrollo está organizado por sprints (0–6). Todas las tareas, bugs e hitos se gestionan directamente en **GitHub Issues**.
-
-Utilizamos etiquetas (`labels`) para organizar las issues por sprint (ej: `sprint-0`, `sprint-1`) y por tipo (ej: `bug`, `feature`, `documentation`).
-
-Sprint destacados:
-- **Sprint 0:** Planificación y diseño técnico
-- **Sprint 1:** Inventario y autenticación
-- **Sprint 2:** Mantenimiento y trazabilidad
-- **Sprint 3:** Aprovisionamiento y compras
-- **Sprint 4:** Sincronización distribuida
-- **Sprint 5:** Seguridad y cumplimiento
-- **Sprint 6:** Optimización y visualización
-
----
-
-## 📖 Cómo Contribuir
-1.  Haz un **fork** de este repositorio.
-2.  Crea una nueva rama para tu feature o bugfix (`git checkout -b feature/nombre-feature`).
-3.  Realiza tus cambios y haz **commit** (`git commit -m 'feat: Agrega nueva funcionalidad'`).
-4.  Envía tus cambios a tu fork (`git push origin feature/nombre-feature`).
-5.  Abre un **Pull Request** hacia la rama `main` de este repositorio.
-
-⚡ Notas adicionales
-Mantén consistencia en commits y mensajes (feat:, fix:, docs:)
-
-Todas las APIs deben documentarse en /openapi/openapi.yaml
-
-Los tests deben pasar antes de mergear a main
+Toda integración con infraestructuras reales requiere autorización administrativa y revisiones SINFOSEC.
 
 📜 Licencia
 MIT License © 2025
