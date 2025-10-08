@@ -1,76 +1,60 @@
-# =====================================================
-# 🧠 agent.yaml — Configuración del Agente IA
-# Proyecto: SL2000-Next
-# Autor: BeLc3bU
-# Descripción:
-#   Archivo de configuración para cualquier IA que
-#   colabore en el desarrollo del sistema SL2000-Next.
-# =====================================================
 
+---
+
+# `agent.yaml`
+```yaml
+# agent.yaml
+# Agente IA - configuración técnica integrada con información SL2000/SL2000E
 context: |
-  SL2000-Next es una reconstrucción moderna del sistema SL2000
-  utilizado por el Ejército del Aire y del Espacio (España).
-  Su objetivo es crear una plataforma full-stack modular para
-  la gestión logística, mantenimiento, operaciones y recursos
-  de aeronaves y vehículos, con énfasis en seguridad, trazabilidad
-  y automatización.
-
-  El proyecto debe funcionar en entornos Docker, con backend en
-  Node.js (Express), frontend en React (Vite), y base de datos
-  PostgreSQL. El agente IA colaborará en la generación, documentación
-  y optimización del código, manteniendo coherencia entre módulos
-  y promoviendo buenas prácticas de ingeniería.
+  Proyecto: SL2000-Next.
+  Propósito: recreación técnica y modernización conceptual del SL2000 (Sistema de Gestión Logística del Ejército del Aire),
+  incorporando lecciones de su evolución hacia SL2000E. El agente debe comprender:
+  - SL2000: sistema operativo desde finales de los 90, cliente/servidor (PowerBuilder), múltiples BD distribuidas,
+    replicación periódica y obsolescencia tecnológica.
+  - SL2000E: programa de migración previsto con arquitectura 3 capas, BD central Oracle y aplicación web Java,
+    objetivo de disponibilidad 24x7 y modernización (entrada en servicio en el marco de modernización antes de 2026).
 
 objectives:
-  - Diseñar y mantener una arquitectura escalable, limpia y segura.
-  - Asegurar coherencia entre backend, frontend y base de datos.
-  - Implementar autenticación JWT con roles definidos.
-  - Documentar automáticamente rutas, controladores y modelos.
-  - Automatizar tareas repetitivas sin comprometer seguridad.
-  - Proponer mejoras de rendimiento y mantenibilidad.
-  - Preservar la filosofía operativa del sistema SL2000 original.
+  - Reproducir la lógica funcional de SL2000 en una arquitectura moderna (Node.js, PostgreSQL, React).
+  - Diseñar nodos locales + nodo central con sincronización y reconciliación.
+  - Soportar entidades clave: Item (NSN/P/N), StockRecord (S/N, estado), WorkOrder, MaintenanceRecord, PurchaseRequest.
+  - Priorizar trazabilidad, auditoría inmutable y cumplimiento de normas de seguridad.
+  - Preparar rutas y scripts de migración de datos (ETL) para cuando se disponga de fuente histórica.
 
 guidelines:
-  - Seguir principios SOLID, DRY y KISS.
-  - Validar y sanitizar todos los datos de entrada/salida.
-  - Mantener el código modular y comentado.
-  - Evitar dependencias innecesarias.
-  - Priorizar la seguridad y la estabilidad sobre la velocidad.
-  - Explicar siempre el propósito del código antes de generarlo.
-  - No generar ni usar información sensible o clasificada.
-  - Toda comunicación debe ser técnica, profesional y precisa.
+  - Técnico: seguir SOLID, DRY, KISS.
+  - Arquitectura: separar capas (API, lógica, persistencia), documentación OpenAPI.
+  - Sincronización: usar colas (Kafka/RabbitMQ); diseñar resoluciones de conflicto (last-write-wins configurable, merge policy).
+  - Escalabilidad: particionado de BD y réplicas, índice por NSN/P/N/S/N.
+  - Disponibilidad: diseñar para alta disponibilidad y recuperación ante desastres (backups, replicas, pruebas RTO/RPO).
+  - Seguridad: TLS, cifrado en reposo, RBAC, MFA, registros de auditoría inmutables.
+  - Cumplimiento: referencias a PECAL y ENS para requisitos de seguridad en despliegue real.
 
 stack:
   backend:
-    - Node.js (Express)
-    - PostgreSQL (Sequelize ORM)
-    - JWT (Autenticación)
-    - Jest (Testing)
+    - Node.js (TypeScript) + Express/Fastify
+    - PostgreSQL (schemas y particionado)
+    - Sequelize o Prisma (opcional)
+    - Kafka / RabbitMQ (mensajería)
+    - JWT / OpenID Connect
+    - Jest + Supertest (testing)
   frontend:
     - React + Vite
-    - Axios (API requests)
-    - Zustand o Redux (estado global)
-    - TailwindCSS (UI)
+    - Axios
+    - Zustand / Redux
+    - TailwindCSS
   infra:
     - Docker + Docker Compose
-    - GitHub Actions (CI/CD opcional)
-    - ESLint + Prettier (estilo de código)
+    - Kubernetes manifests (Helm opcional)
+    - Prometheus + Grafana + ELK/Opensearch
+    - GitHub Actions (CI/CD)
 
 roles:
-  - Administrador: control total del sistema (CRUD completo)
-  - Técnico: registro y actualización de mantenimiento
-  - Operador: acceso a informes y operaciones limitadas
-  - Invitado: lectura restringida de datos
-
-output_format:
-  - Todas las respuestas deben estructurarse así:
-    1. 🧩 **Resumen técnico**
-    2. 🧠 **Explicación del enfoque**
-    3. 💻 **Código o comandos**
-    4. 🧪 **Ejemplo o validación**
-  - Escribir el código en inglés, los comentarios y explicaciones en español.
-  - Mantener un formato limpio y legible (Markdown + bloques de código).
-  - Si hay varias soluciones posibles, explicar ventajas y desventajas.
+  - administrador
+  - tecnico
+  - operador
+  - auditor
+  - invitado
 
 naming_conventions:
   files: "kebab-case"
@@ -78,20 +62,27 @@ naming_conventions:
   components: "PascalCase"
   database_tables: "snake_case"
 
+data_model_notes:
+  - SL2000 histórico implicaba decenas de BD locales replicadas; en SL2000-Next modelar:
+    - esquema central (master) + esquemas por unidad (tenant) o tablas con location_id
+    - mantener historial por S/N y audit_log inmutable
+  - Campos críticos:
+    - Item: nsn, part_number, description, unit, lifecycle_code
+    - StockRecord: item_id, location_id, serial_number, qty, status, last_inventory_date
+    - WorkOrder: id, item_id, serial_number, assigned_technician_id, status, start_date, end_date
+    - PurchaseRequest: id, item_id, qty_requested, priority, status, supplier_id
+
+output_format:
+  - Estructura de respuestas: Resumen técnico -> Enfoque -> Código -> Ejemplo/Validación.
+  - Código en inglés, comentarios y explicaciones en español.
+  - Cuando generes migraciones o scripts ETL, añade advertencias de no ejecutar contra sistemas reales sin autorización.
+
 security:
-  - Nunca incluir claves, tokens o datos reales.
-  - No exponer configuraciones críticas en el código generado.
-  - Todas las rutas y acciones deben tener validación de permisos.
-  - Cifrar contraseñas con bcrypt o equivalente.
-  - Usar HTTPS y CORS configurado correctamente.
+  - No solicitar ni manejar datos clasificados.
+  - En escenarios de pruebas, usar datos ficticios/anónimos.
+  - Registrar y auditar todas las acciones críticas.
 
-collaboration:
-  - Las IAs deben coordinar sus cambios respetando ramas y commits:
-    - feature/<nombre_modulo>
-    - fix/<nombre_bug>
-  - Los mensajes de commit seguirán el formato Conventional Commits.
-  - Se deben generar logs y documentación automática de los endpoints.
-
+version: 1.1.0
+status: pre-alpha
 license: MIT
-version: 1.0.0
-status: "Pre-Alpha"
+
