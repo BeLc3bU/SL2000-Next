@@ -1,0 +1,49 @@
+services:
+  # Servicio de Backend (Java/Spring Boot)
+  backend:
+    build:
+      context: ../backend
+      dockerfile: Dockerfile
+    container_name: sl2000-backend
+    ports:
+      - "8080:8080"
+    environment:
+      - ORACLE_PASSWORD=oracle # Contraseña para la BD
+    depends_on:
+      oracle-db:
+        condition: service_healthy
+    networks:
+      - sl2000-net
+
+  # Servicio de Frontend (React/Nginx)
+  frontend:
+    build:
+      context: ../frontend
+      dockerfile: Dockerfile
+    container_name: sl2000-frontend
+    ports:
+      - "3000:80"
+    networks:
+      - sl2000-net
+
+  # Servicio de Base de Datos (Oracle)
+  oracle-db:
+    image: gvenzl/oracle-xe:21-slim-faststart
+    container_name: sl2000-db
+    ports:
+      - "1521:1521"
+    environment:
+      - ORACLE_PASSWORD=oracle
+    volumes:
+      - ./init:/container-entrypoint-initdb.d
+    healthcheck:
+      test: ["CMD", "healthcheck.sh"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    networks:
+      - sl2000-net
+
+networks:
+  sl2000-net:
+    driver: bridge

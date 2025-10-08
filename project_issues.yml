@@ -1,81 +1,30 @@
-# project_issues.yml
-# Proyecto: SL2000-Next
-# Plan de desarrollo ágil basado en sprints
-# Cada bloque corresponde a un conjunto de issues creadas automáticamente
-sprints:
-  - id: 0
-    name: "PLANIFICACIÓN Y DISEÑO TÉCNICO"
-    issues:
-      - title: "Definir arquitectura general del sistema"
-        body: |
-          Objetivo: establecer la base tecnológica del nuevo sistema SL2000-Next.
-          - Documentar arquitectura (backend, frontend, DB, mensajería)
-          - Seleccionar stack tecnológico
-          - Crear estructura inicial de carpetas y repos
-        labels: ["arquitectura", "alta prioridad"]
-      - title: "Modelo de datos (ERD)"
-        body: |
-          - Diseñar diagrama entidad-relación (PostgreSQL)
-          - Definir tablas: Item, StockRecord, WorkOrder, MaintenanceRecord, PurchaseRequest, User, AuditLog
-          - Documentar relaciones y claves foráneas
-        labels: ["base de datos", "documentación"]
-      - title: "Definir especificación OpenAPI"
-        body: |
-          - Crear especificación OpenAPI 3.1 con endpoints CRUD iniciales
-          - Rutas: /items, /stocks, /users
-        labels: ["API"]
-      - title: "Configurar entorno Docker y CI/CD"
-        body: |
-          - Dockerfile backend + frontend
-          - docker-compose.yml
-          - Pipeline GitHub Actions
-        labels: ["devops"]
+issues:
+  - id: 001
+    title: "Sprint 1: Configuración base del entorno y generación de carpetas"
+    description: "Crear estructura de archivos, configurar Docker y base de datos Oracle, y probar conexión entre backend y DB."
+    status: "completado"
+    sprint: 1
 
-  - id: 1
-    name: "INVENTARIO Y AUTENTICACIÓN"
-    issues:
-      - title: "Autenticación y roles (MFA)"
-        body: |
-          - Implementar login, registro, MFA
-          - Roles: Administrador, Gestor Logístico, Técnico, Auditor
-          - Guardar tokens en JWT y refresco seguro
-        labels: ["seguridad", "backend"]
-      - title: "CRUD de Items e Inventario"
-        body: |
-          - Crear endpoints CRUD para Items
-          - Campos: NSN, P/N, descripción, cantidad, ubicación, estado
-          - Validar integridad de datos
-        labels: ["inventario", "backend"]
-      - title: "UI de Inventario (React)"
-        body: |
-          - Crear interfaz básica con tabla de items
-          - Filtros por ubicación y estado
-          - Conexión con API backend
-        labels: ["frontend", "UI"]
-      - title: "Logs de auditoría"
-        body: |
-          - Registrar operaciones de usuario (alta, baja, modificación)
-          - Guardar timestamp, user_id, acción, entidad
-        labels: ["auditoría"]
+  - id: 002
+    title: "Sprint 2: Backend base (Java + Spring Boot)"
+    description: "Crear endpoints iniciales, configurar modelo de datos JPA y añadir seguridad (JWT / OAuth2)."
+    status: "pendiente"
+    sprint: 2
 
-  - id: 2
-    name: "MANTENIMIENTO Y TRAZABILIDAD"
-    issues:
-      - title: "Módulo de órdenes de trabajo (OT)"
-        body: |
-          - Crear entidad WorkOrder vinculada a Items
-          - Estados: abierta, en curso, completada
-          - Asociar técnicos responsables
-        labels: ["mantenimiento"]
-      - title: "Historial de mantenimiento"
-        body: |
-          - Registrar intervenciones por número de serie
-          - Mostrar histórico en frontend
-        labels: ["mantenimiento", "frontend"]
-      - title: "Auditoría avanzada"
-        body: |
-          - Añadir visualización de logs por usuario/objeto
-          - Filtros de búsqueda por rango de fechas
-        labels: ["auditoría"]
+  - id: 003
+    title: "Sprint 3: Frontend (React)"
+    description: "Crear interfaz de login y dashboard, y conectar con API REST del backend."
+    status: "pendiente"
+    sprint: 3
 
-  # ... (El resto de los sprints seguirían la misma estructura)
+  - id: 004
+    title: "Sprint 4: Módulos funcionales principales"
+    description: "Desarrollar los módulos de mantenimiento, inventario, planificación y auditorías."
+    status: "pendiente"
+    sprint: 4
+
+  - id: 005
+    title: "Sprint 5: Pruebas, documentación y despliegue"
+    description: "Implementar pruebas unitarias e integración, generar documentación final y preparar el despliegue."
+    status: "pendiente"
+    sprint: 5

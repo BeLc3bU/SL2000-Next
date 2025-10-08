@@ -1,88 +1,53 @@
-
----
-
-# `agent.yaml`
-```yaml
-# agent.yaml
-# Agente IA - configuración técnica integrada con información SL2000/SL2000E
-context: |
-  Proyecto: SL2000-Next.
-  Propósito: recreación técnica y modernización conceptual del SL2000 (Sistema de Gestión Logística del Ejército del Aire),
-  incorporando lecciones de su evolución hacia SL2000E. El agente debe comprender:
-  - SL2000: sistema operativo desde finales de los 90, cliente/servidor (PowerBuilder), múltiples BD distribuidas,
-    replicación periódica y obsolescencia tecnológica.
-  - SL2000E: programa de migración previsto con arquitectura 3 capas, BD central Oracle y aplicación web Java,
-    objetivo de disponibilidad 24x7 y modernización (entrada en servicio en el marco de modernización antes de 2026).
-
-objectives:
-  - Reproducir la lógica funcional de SL2000 en una arquitectura moderna (Node.js, PostgreSQL, React).
-  - Diseñar nodos locales + nodo central con sincronización y reconciliación.
-  - Soportar entidades clave: Item (NSN/P/N), StockRecord (S/N, estado), WorkOrder, MaintenanceRecord, PurchaseRequest.
-  - Priorizar trazabilidad, auditoría inmutable y cumplimiento de normas de seguridad.
-  - Preparar rutas y scripts de migración de datos (ETL) para cuando se disponga de fuente histórica.
-
-guidelines:
-  - Técnico: seguir SOLID, DRY, KISS.
-  - Arquitectura: separar capas (API, lógica, persistencia), documentación OpenAPI.
-  - Sincronización: usar colas (Kafka/RabbitMQ); diseñar resoluciones de conflicto (last-write-wins configurable, merge policy).
-  - Escalabilidad: particionado de BD y réplicas, índice por NSN/P/N/S/N.
-  - Disponibilidad: diseñar para alta disponibilidad y recuperación ante desastres (backups, replicas, pruebas RTO/RPO).
-  - Seguridad: TLS, cifrado en reposo, RBAC, MFA, registros de auditoría inmutables.
-  - Cumplimiento: referencias a PECAL y ENS para requisitos de seguridad en despliegue real.
-
-stack:
-  backend:
-    - Node.js (TypeScript) + Express/Fastify
-    - PostgreSQL (schemas y particionado)
-    - Sequelize o Prisma (opcional)
-    - Kafka / RabbitMQ (mensajería)
-    - JWT / OpenID Connect
-    - Jest + Supertest (testing)
-  frontend:
-    - React + Vite
-    - Axios
-    - Zustand / Redux
-    - TailwindCSS
-  infra:
-    - Docker + Docker Compose
-    - Kubernetes manifests (Helm opcional)
-    - Prometheus + Grafana + ELK/Opensearch
-    - GitHub Actions (CI/CD)
-
-roles:
-  - administrador
-  - gestor_logistico
-  - tecnico
-  - auditor
-  - invitado
-
-naming_conventions:
-  files: "kebab-case"
-  variables: "camelCase"
-  components: "PascalCase"
-  database_tables: "snake_case"
-
-data_model_notes:
-  - SL2000 histórico implicaba decenas de BD locales replicadas; en SL2000-Next modelar:
-    - esquema central (master) + esquemas por unidad (tenant) o tablas con location_id
-    - mantener historial por S/N y audit_log inmutable
-  - Campos críticos:
-    - Item: nsn, part_number, description, unit, lifecycle_code
-    - StockRecord: item_id, location_id, serial_number, qty, status, last_inventory_date
-    - WorkOrder: id, item_id, serial_number, assigned_technician_id, status, planned_date, completion_date
-    - PurchaseRequest: id, item_id, qty_requested, priority, status, supplier_id
-    - MaintenanceRecord: id, work_order_id, actions_taken, parts_used, time_spent, technician_id
-
-output_format:
-  - Estructura de respuestas: Resumen técnico -> Enfoque -> Código -> Ejemplo/Validación.
-  - Código en inglés, comentarios y explicaciones en español.
-  - Cuando generes migraciones o scripts ETL, añade advertencias de no ejecutar contra sistemas reales sin autorización.
-
-security:
-  - No solicitar ni manejar datos clasificados.
-  - En escenarios de pruebas, usar datos ficticios/anónimos.
-  - Registrar y auditar todas las acciones críticas.
-
-version: 1.1.0
-status: pre-alpha
-license: MIT
+agent:
+  name: "SL2000E-AI"
+  description: "Agente técnico para el desarrollo guiado y automatizado del sistema logístico SL2000E"
+  language: "es"
+  version: "2.0"
+  capabilities:
+    - "Generación automática de carpetas y archivos del proyecto"
+    - "Asistente por sprints de desarrollo"
+    - "Integración con arquitectura Java/Oracle"
+    - "Documentación técnica automática"
+    - "Compatibilidad con sistemas ENS/PECAL"
+  architecture:
+    backend: "Java (Spring Boot)"
+    frontend: "React"
+    database: "Oracle 19c"
+    orchestration: "Docker Compose"
+  project_structure:
+    root:
+      - /backend/
+      - /frontend/
+      - /database/
+      - /docs/
+    backend_files:
+      - backend/pom.xml
+      - backend/src/main/java/com/sl2000next/Sl2000NextApplication.java
+      - backend/src/main/resources/application.yml
+      - backend/Dockerfile
+    frontend_files:
+      - frontend/package.json
+      - frontend/src/App.js
+      - frontend/Dockerfile
+    database_files:
+      - database/init/init.sql
+      - database/docker-compose.yml
+    documentation:
+      - README.md
+      - agent.md
+      - agent.yaml
+      - project_issues.yml
+  workflow:
+    guided_sprints: true
+    auto_generate_docs: true
+    steps:
+      - Sprint 1: Configuración base del entorno y generación de carpetas
+      - Sprint 2: Backend base (Java + Spring Boot)
+      - Sprint 3: Frontend (React)
+      - Sprint 4: Módulos funcionales principales
+      - Sprint 5: Pruebas, documentación y despliegue
+  compliance:
+    standards:
+      - "Esquema Nacional de Seguridad (ENS)"
+      - "PECAL 2110"
+      - "ISO/IEC 27001"

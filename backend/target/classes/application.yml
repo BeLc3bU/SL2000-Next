@@ -1,0 +1,15 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: sl2000-next-backend
+  datasource:
+    url: jdbc:oracle:thin:@oracle-db:1521/XEPDB1
+    username: system
+    password: ${ORACLE_PASSWORD} # Se inyectará desde Docker Compose
+    driver-class-name: oracle.jdbc.OracleDriver
+  jpa:
+    hibernate:
+      ddl-auto: update # En desarrollo, 'update' es útil. Para producción usaremos 'validate' o 'none'.
+    show-sql: true

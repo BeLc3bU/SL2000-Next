@@ -1,64 +1,38 @@
-# AGENT.md — SL2000-Next (Documentación técnica para IAs y desarrolladores)
+# SL2000E-AI Agent
 
-## Resumen ejecutivo
-SL2000-Next es un prototipo técnico que replica la lógica del SL2000 (Sistema de Gestión Logística del Ejército del Aire) y su camino hacia SL2000E. Está pensado para ser una base moderna (Node.js / React / PostgreSQL) que permita:
+## Descripción General
+Este agente de IA está diseñado para asistir en el desarrollo, documentación y despliegue de un prototipo técnico del **Sistema de Gestión Logística Integrado SL2000E**, inspirado en la modernización del SL2000 del Ejército del Aire y del Espacio.  
+Su objetivo es automatizar la creación de carpetas, código base y documentación técnica, guiando al desarrollador sprint a sprint hasta completar el proyecto.
 
-- Gestionar inventarios (NSN/P/N/S/N), reparables y trazabilidad.
-- Planificar y registrar mantenimiento por número de serie.
-- Gestionar ciclo de compras y recepción.
-- Operar en entornos distribuidos (nodos locales + central).
-- Cumplir requisitos de seguridad y auditoría.
+## Arquitectura Objetivo
+- **Capa de Presentación (Frontend):** React (interfaz web moderna)
+- **Capa de Lógica de Negocio (Backend):** Java / Spring Boot
+- **Capa de Persistencia (Base de Datos):** Oracle 19c
+- **Orquestación:** Docker Compose
+- **Integraciones futuras:** IA, Big Data, 5G, Realidad Aumentada
 
-## Lecciones tomadas de SL2000 histórico
-- Arquitectura monolítica cliente/servidor (PowerBuilder) generó problemas de migración y escalabilidad.
-- Distribución original: múltiples BDs locales con replicación periódica; lleva a problemas de sincronización y dependencia de hojas de cálculo cuando la interoperabilidad falla.
-- Objetivo SL2000E: migración a arquitectura 3 capas, BD central ORACLE, aplicación web Java y disponibilidad 24x7 (planificada dentro del marco de modernización hasta 2026).
+## Funcionalidades del Agente
+1. Crear automáticamente toda la estructura de carpetas y archivos base del proyecto.
+2. Generar código de arranque (boilerplate) para backend y frontend.
+3. Documentar automáticamente en cada sprint los cambios realizados.
+4. Guiar al usuario paso a paso en el flujo de desarrollo.
+5. Mantener compatibilidad con arquitecturas de tres capas y prácticas seguras.
 
-## Principios de diseño SL2000-Next
-- Separación clara de capas (API, lógica, persistencia).
-- Modelo de datos que conserva trazabilidad por S/N y audit log inmutable.
-- Sincronización eventual entre nodos con mecanismos de reconciliación.
-- Diseño pensado para migración de datos desde SL2000: herramientas ETL y procesos de reconciliación.
-- Cumplimiento de requisitos de seguridad (PECAL, ENS como referencia institucional).
+## Flujo de Trabajo por Sprints
+- **Sprint 1:** Configuración base del entorno y generación de carpetas.
+- **Sprint 2:** Backend base (Java + Spring Boot).
+- **Sprint 3:** Frontend (React).
+- **Sprint 4:** Módulos funcionales principales.
+- **Sprint 5:** Pruebas, documentación y despliegue.
 
-## Entidades críticas (resumen)
-- **Item**: nsn, part_number, description, unit_of_issue, lifecycle_code.
-- **StockRecord**: item_id, location_id, serial_number (S/N), qty, status, last_inventory_date.
-- **WorkOrder**: id, item_id, serial_number, assigned_technician_id, status, planned_date, completion_date.
-- **MaintenanceRecord**: id, work_order_id, actions_taken, parts_used, time_spent, technician_id.
-- **PurchaseRequest / Order**: requester_id, item_id, qty, priority, supplier_id, status.
-- **AuditLog**: entity, entity_id, action, user_id, timestamp, previous_state.
+## Comandos Sugeridos para el Agente
+- `crear_estructura()`: genera carpetas y archivos iniciales.
+- `iniciar_sprint(n)`: guía y ejecuta las tareas del sprint *n*.
+- `documentar_cambios()`: actualiza README y changelog.
+- `finalizar_sprint()`: marca el sprint como completado y genera informe técnico.
 
-## Flujo de alto nivel
-1. Requisición → Aprobación → Orden de compra → Recepción → Integración en stock → Asignación a OT (si aplica) → Mantenimiento → Historial.
-2. Nodo local puede operar offline; al reconectar envía eventos a la central (mensajería) para reconciliación.
-
-## Requisitos no funcionales
-- Disponibilidad objetivo para prototipo: alta, diseñable para HA (replicas, backups).
-- Latencia: consultas de inventario < 200ms en condiciones nominales (objetivo de diseño).
-- Seguridad: TLS everywhere, RBAC, MFA para roles con privilegios.
-- Auditoría: logs inmutables con retención configurable.
-
-## Tareas inmediatas para la IA/desarrollador
-1. Generar esquema ER inicial y migraciones (PostgreSQL).
-2. Crear OpenAPI para Items y StockRecord.
-3. Implementar servicio backend básico (auth + CRUD Items + CRUD StockRecord).
-4. UI mínima (React) con listado y filtros.
-5. Mecanismo simple de mensajería (RabbitMQ local) para pruebas de sincronización.
-
-## Migración / ETL
-- Preparar scripts ETL para transformar esquemas legacy (PowerBuilder/DB locales) a esquema central.
-- Diseñar utilidades de reconciliación y reportes de variación.
-
-## Pautas operativas
-- Antes de integrar datos reales: revisión SINFOSEC y autorización administrativa.
-- Para pruebas: usar datos dummy y entornos aislados.
-
-## Referencias (resumen integrado)
-- Documento didáctico sobre SL2000 y SL2000E (resumen incluido en README).
-- Pliego técnico SL2000E (migración a arquitectura 3 capas y Oracle / Java; objetivo 2026).
-- Notas internas: centralización en servidores CESTIC y caducidad de plataformas legacy.
-
----
-
-**Fin de AGENT.md**
+## Referencias Técnicas
+Basado en:
+- MALOG EA (2021): Programa SL2000E.
+- Ortiz (2023): Informe sobre obsolescencia tecnológica SL2000.
+- Esquema Nacional de Seguridad (ENS).
