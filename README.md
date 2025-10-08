@@ -37,38 +37,32 @@ El objetivo es modelar y prototipar la funcionalidad operativa del SL2000/SL2000
 ---
 
 ## 📂 Estructura de carpetas sugerida
+```text
 SL2000-Next/
-│
-├─ backend/
-│ ├─ src/
-│ ├─ tests/
-│ └─ Dockerfile
-│
-├─ frontend/
-│ ├─ src/
-│ └─ Dockerfile
-│
-├─ docs/ # Diagramas, pliegos y referencias
-│ ├─ architecture.md
-│ ├─ data_model.png
-│ └─ SL2000_references.md # resumen de SL2000/SL2000E incorporado
-│
-├─ openapi/
-│ └─ openapi.yaml
-│
-├─ infra/
-│ └─ docker-compose.yml
-│
-├─ project_issues/
-│ └─ SL2000-Next_Issues.docx
-│
-├─ agent.yaml
-├─ agent.md
-├─ prompt_master.txt
-└─ README.md
+├── backend/
+│   ├── src/
+│   ├── tests/
+│   └── Dockerfile
+├── frontend/
+│   ├── src/
+│   └── Dockerfile
+├── docs/                 # Diagramas, pliegos y referencias
+│   ├── architecture.md
+│   ├── data_model.png
+│   └── SL2000_references.md
+├── openapi/
+│   └── openapi.yaml
+├── infra/
+│   └── docker-compose.yml
+├── project_issues/
+│   └── SL2000-Next_Issues.docx
+├── agent.yaml
+├── agent.md
+├── prompt_master.txt
+└── README.md
+```
 
-yaml
-Copiar código
+
 
 ---
 
