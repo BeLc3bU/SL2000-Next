@@ -67,8 +67,6 @@ SL2000-Next/
 ├─ prompt_master.txt
 └─ README.md
 
-yaml
-Copiar código
 
 ---
 
