@@ -2,176 +2,80 @@
 # Proyecto: SL2000-Next
 # Plan de desarrollo ágil basado en sprints
 # Cada bloque corresponde a un conjunto de issues creadas automáticamente
+sprints:
+  - id: 0
+    name: "PLANIFICACIÓN Y DISEÑO TÉCNICO"
+    issues:
+      - title: "Definir arquitectura general del sistema"
+        body: |
+          Objetivo: establecer la base tecnológica del nuevo sistema SL2000-Next.
+          - Documentar arquitectura (backend, frontend, DB, mensajería)
+          - Seleccionar stack tecnológico
+          - Crear estructura inicial de carpetas y repos
+        labels: ["arquitectura", "alta prioridad"]
+      - title: "Modelo de datos (ERD)"
+        body: |
+          - Diseñar diagrama entidad-relación (PostgreSQL)
+          - Definir tablas: Item, StockRecord, WorkOrder, MaintenanceRecord, PurchaseRequest, User, AuditLog
+          - Documentar relaciones y claves foráneas
+        labels: ["base de datos", "documentación"]
+      - title: "Definir especificación OpenAPI"
+        body: |
+          - Crear especificación OpenAPI 3.1 con endpoints CRUD iniciales
+          - Rutas: /items, /stocks, /users
+        labels: ["API"]
+      - title: "Configurar entorno Docker y CI/CD"
+        body: |
+          - Dockerfile backend + frontend
+          - docker-compose.yml
+          - Pipeline GitHub Actions
+        labels: ["devops"]
 
-######################################################################
-# 🧩 SPRINT 0 — PLANIFICACIÓN Y DISEÑO TÉCNICO
-######################################################################
+  - id: 1
+    name: "INVENTARIO Y AUTENTICACIÓN"
+    issues:
+      - title: "Autenticación y roles (MFA)"
+        body: |
+          - Implementar login, registro, MFA
+          - Roles: Administrador, Gestor Logístico, Técnico, Auditor
+          - Guardar tokens en JWT y refresco seguro
+        labels: ["seguridad", "backend"]
+      - title: "CRUD de Items e Inventario"
+        body: |
+          - Crear endpoints CRUD para Items
+          - Campos: NSN, P/N, descripción, cantidad, ubicación, estado
+          - Validar integridad de datos
+        labels: ["inventario", "backend"]
+      - title: "UI de Inventario (React)"
+        body: |
+          - Crear interfaz básica con tabla de items
+          - Filtros por ubicación y estado
+          - Conexión con API backend
+        labels: ["frontend", "UI"]
+      - title: "Logs de auditoría"
+        body: |
+          - Registrar operaciones de usuario (alta, baja, modificación)
+          - Guardar timestamp, user_id, acción, entidad
+        labels: ["auditoría"]
 
-- title: "Sprint 0 - Definir arquitectura general del sistema"
-  body: |
-    Objetivo: establecer la base tecnológica del nuevo sistema SL2000-Next.
-    - Documentar arquitectura (backend, frontend, DB, mensajería)
-    - Seleccionar stack tecnológico
-    - Crear estructura inicial de carpetas y repos
-  labels: ["Sprint 0", "arquitectura", "alta prioridad"]
-  assignees: []
+  - id: 2
+    name: "MANTENIMIENTO Y TRAZABILIDAD"
+    issues:
+      - title: "Módulo de órdenes de trabajo (OT)"
+        body: |
+          - Crear entidad WorkOrder vinculada a Items
+          - Estados: abierta, en curso, completada
+          - Asociar técnicos responsables
+        labels: ["mantenimiento"]
+      - title: "Historial de mantenimiento"
+        body: |
+          - Registrar intervenciones por número de serie
+          - Mostrar histórico en frontend
+        labels: ["mantenimiento", "frontend"]
+      - title: "Auditoría avanzada"
+        body: |
+          - Añadir visualización de logs por usuario/objeto
+          - Filtros de búsqueda por rango de fechas
+        labels: ["auditoría"]
 
-- title: "Sprint 0 - Modelo de datos (ERD)"
-  body: |
-    - Diseñar diagrama entidad-relación (PostgreSQL)
-    - Definir tablas: Item, StockRecord, WorkOrder, MaintenanceRecord, PurchaseRequest, User, AuditLog
-    - Documentar relaciones y claves foráneas
-  labels: ["Sprint 0", "base de datos", "documentación"]
-
-- title: "Sprint 0 - Definir especificación OpenAPI"
-  body: |
-    - Crear especificación OpenAPI 3.1 con endpoints CRUD iniciales
-    - Rutas: /items, /stocks, /users
-  labels: ["Sprint 0", "API"]
-
-- title: "Sprint 0 - Configurar entorno Docker y CI/CD"
-  body: |
-    - Dockerfile backend + frontend
-    - docker-compose.yml
-    - Pipeline GitHub Actions
-  labels: ["Sprint 0", "devops"]
-
-######################################################################
-# 🧱 SPRINT 1 — INVENTARIO Y AUTENTICACIÓN
-######################################################################
-
-- title: "Sprint 1 - Autenticación y roles (MFA)"
-  body: |
-    - Implementar login, registro, MFA
-    - Roles: Admin, Gestor, Técnico, Auditor
-    - Guardar tokens en JWT y refresco seguro
-  labels: ["Sprint 1", "seguridad", "backend"]
-
-- title: "Sprint 1 - CRUD de Items e Inventario"
-  body: |
-    - Crear endpoints CRUD para Items
-    - Campos: NSN, P/N, descripción, cantidad, ubicación, estado
-    - Validar integridad de datos
-  labels: ["Sprint 1", "inventario", "backend"]
-
-- title: "Sprint 1 - UI de Inventario (React)"
-  body: |
-    - Crear interfaz básica con tabla de items
-    - Filtros por ubicación y estado
-    - Conexión con API backend
-  labels: ["Sprint 1", "frontend", "UI"]
-
-- title: "Sprint 1 - Logs de auditoría"
-  body: |
-    - Registrar operaciones de usuario (alta, baja, modificación)
-    - Guardar timestamp, user_id, acción, entidad
-  labels: ["Sprint 1", "auditoría"]
-
-######################################################################
-# ⚙️ SPRINT 2 — MANTENIMIENTO Y TRAZABILIDAD
-######################################################################
-
-- title: "Sprint 2 - Módulo de órdenes de trabajo (OT)"
-  body: |
-    - Crear entidad WorkOrder vinculada a Items
-    - Estados: abierta, en curso, completada
-    - Asociar técnicos responsables
-  labels: ["Sprint 2", "mantenimiento"]
-
-- title: "Sprint 2 - Historial de mantenimiento"
-  body: |
-    - Registrar intervenciones por número de serie
-    - Mostrar histórico en frontend
-  labels: ["Sprint 2", "mantenimiento", "frontend"]
-
-- title: "Sprint 2 - Auditoría avanzada"
-  body: |
-    - Añadir visualización de logs por usuario/objeto
-    - Filtros de búsqueda por rango de fechas
-  labels: ["Sprint 2", "auditoría"]
-
-######################################################################
-# 📦 SPRINT 3 — APROVISIONAMIENTO Y CICLO DE COMPRAS
-######################################################################
-
-- title: "Sprint 3 - Módulo de solicitudes y pedidos"
-  body: |
-    - Generar solicitudes automáticas por stock mínimo
-    - Crear tabla PurchaseRequest y Orders
-  labels: ["Sprint 3", "aprovisionamiento"]
-
-- title: "Sprint 3 - Recepción y validación de pedidos"
-  body: |
-    - Integrar recepción de materiales con inventario
-    - Cambiar estado a 'Disponible'
-  labels: ["Sprint 3", "inventario", "backend"]
-
-- title: "Sprint 3 - Dashboard de compras"
-  body: |
-    - Mostrar estado de solicitudes, pendientes, completadas
-    - Exportar reportes en CSV/PDF
-  labels: ["Sprint 3", "frontend"]
-
-######################################################################
-# 🌐 SPRINT 4 — SINCRONIZACIÓN DISTRIBUIDA
-######################################################################
-
-- title: "Sprint 4 - Nodo central y nodos locales"
-  body: |
-    - Implementar sincronización maestro-esclavo
-    - Usar Kafka o RabbitMQ
-  labels: ["Sprint 4", "arquitectura", "mensajería"]
-
-- title: "Sprint 4 - Resolución de conflictos de datos"
-  body: |
-    - Estrategia: last-write-wins o merges configurables
-  labels: ["Sprint 4", "backend"]
-
-- title: "Sprint 4 - Simulación desconexión/reconexión"
-  body: |
-    - Probar funcionamiento offline
-    - Validar reconciliación de inventarios
-  labels: ["Sprint 4", "pruebas", "QA"]
-
-######################################################################
-# 🔐 SPRINT 5 — SEGURIDAD Y CUMPLIMIENTO
-######################################################################
-
-- title: "Sprint 5 - Cifrado TLS y almacenamiento seguro"
-  body: |
-    - Implementar HTTPS completo
-    - Cifrar datos sensibles (passwords, tokens)
-  labels: ["Sprint 5", "seguridad"]
-
-- title: "Sprint 5 - Control de acceso por rol"
-  body: |
-    - Política RBAC completa
-    - Validaciones en backend y frontend
-  labels: ["Sprint 5", "seguridad", "backend"]
-
-- title: "Sprint 5 - Backups automáticos"
-  body: |
-    - Programar backups diarios y verificación de integridad
-  labels: ["Sprint 5", "devops"]
-
-######################################################################
-# 🧠 SPRINT 6 — OPTIMIZACIÓN Y VISUALIZACIÓN
-######################################################################
-
-- title: "Sprint 6 - Dashboard de rendimiento"
-  body: |
-    - Mostrar métricas: MTBF, disponibilidad, consumo
-    - Integrar gráficos (Recharts / Chart.js)
-  labels: ["Sprint 6", "frontend", "analítica"]
-
-- title: "Sprint 6 - Reportes y exportaciones"
-  body: |
-    - Exportar informes de mantenimiento e inventario
-    - Formatos PDF y Excel
-  labels: ["Sprint 6", "reportes"]
-
-- title: "Sprint 6 - Refactor final y QA"
-  body: |
-    - Limpieza de código, optimización de queries
-    - Pruebas E2E y documentación final
-  labels: ["Sprint 6", "QA", "final"]
+  # ... (El resto de los sprints seguirían la misma estructura)

@@ -77,13 +77,13 @@ Copiar código
    ```bash
    git clone https://github.com/TU_USUARIO/SL2000-Next.git
    cd SL2000-Next
-Arranca con Docker Compose (plantilla inicial en /infra):
-
-bash
-Copiar código
-docker-compose up --build
-Backend: http://localhost:3000
-Frontend: http://localhost:5173
+   ```
+2. Arranca con Docker Compose (la configuración se encuentra en la carpeta `/infra`):
+   ```bash
+   docker-compose -f infra/docker-compose.yml up --build
+   ```
+   - **Backend:** http://localhost:3000
+   - **Frontend:** http://localhost:5173
 
 🗂 Issues por Sprint
 El desarrollo está organizado por sprints (0–6). Consulta project_issues/SL2000-Next_Issues.docx para copiar/pegar las tareas en GitHub Issues.

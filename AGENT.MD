@@ -25,7 +25,7 @@ SL2000-Next es un prototipo técnico que replica la lógica del SL2000 (Sistema 
 - **Item**: nsn, part_number, description, unit_of_issue, lifecycle_code.
 - **StockRecord**: item_id, location_id, serial_number (S/N), qty, status, last_inventory_date.
 - **WorkOrder**: id, item_id, serial_number, assigned_technician_id, status, planned_date, completion_date.
-- **MaintenanceRecord**: workorder_id, actions_taken, parts_used, time_spent, technician_id.
+- **MaintenanceRecord**: id, work_order_id, actions_taken, parts_used, time_spent, technician_id.
 - **PurchaseRequest / Order**: requester_id, item_id, qty, priority, supplier_id, status.
 - **AuditLog**: entity, entity_id, action, user_id, timestamp, previous_state.
 

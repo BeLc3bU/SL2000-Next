@@ -51,8 +51,8 @@ stack:
 
 roles:
   - administrador
+  - gestor_logistico
   - tecnico
-  - operador
   - auditor
   - invitado
 
@@ -69,8 +69,9 @@ data_model_notes:
   - Campos críticos:
     - Item: nsn, part_number, description, unit, lifecycle_code
     - StockRecord: item_id, location_id, serial_number, qty, status, last_inventory_date
-    - WorkOrder: id, item_id, serial_number, assigned_technician_id, status, start_date, end_date
+    - WorkOrder: id, item_id, serial_number, assigned_technician_id, status, planned_date, completion_date
     - PurchaseRequest: id, item_id, qty_requested, priority, status, supplier_id
+    - MaintenanceRecord: id, work_order_id, actions_taken, parts_used, time_spent, technician_id
 
 output_format:
   - Estructura de respuestas: Resumen técnico -> Enfoque -> Código -> Ejemplo/Validación.
@@ -85,4 +86,3 @@ security:
 version: 1.1.0
 status: pre-alpha
 license: MIT
-
