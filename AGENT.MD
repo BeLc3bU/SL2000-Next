@@ -1,166 +1,64 @@
-# 🧠 AGENT.md — SL2000-Next
+# AGENT.md — SL2000-Next (Documentación técnica para IAs y desarrolladores)
 
-## 🎯 Objetivo del Proyecto
+## Resumen ejecutivo
+SL2000-Next es un prototipo técnico que replica la lógica del SL2000 (Sistema de Gestión Logística del Ejército del Aire) y su camino hacia SL2000E. Está pensado para ser una base moderna (Node.js / React / PostgreSQL) que permita:
 
-**SL2000-Next** es una reconstrucción moderna del sistema **SL2000** utilizado por el *Ejército del Aire y del Espacio (España)*, orientado al **seguimiento logístico, control de mantenimiento y gestión de recursos aéreos y terrestres**.
+- Gestionar inventarios (NSN/P/N/S/N), reparables y trazabilidad.
+- Planificar y registrar mantenimiento por número de serie.
+- Gestionar ciclo de compras y recepción.
+- Operar en entornos distribuidos (nodos locales + central).
+- Cumplir requisitos de seguridad y auditoría.
 
-Este nuevo sistema busca aprovechar tecnologías actuales para mejorar:
-- Seguridad y trazabilidad de datos.
-- Integración entre módulos (logística, mantenimiento, operaciones, personal).
-- Interfaz moderna y responsive.
-- Automatización de procesos y notificaciones.
-- Compatibilidad con despliegue en **entornos Docker**.
+## Lecciones tomadas de SL2000 histórico
+- Arquitectura monolítica cliente/servidor (PowerBuilder) generó problemas de migración y escalabilidad.
+- Distribución original: múltiples BDs locales con replicación periódica; lleva a problemas de sincronización y dependencia de hojas de cálculo cuando la interoperabilidad falla.
+- Objetivo SL2000E: migración a arquitectura 3 capas, BD central ORACLE, aplicación web Java y disponibilidad 24x7 (planificada dentro del marco de modernización hasta 2026).
 
----
+## Principios de diseño SL2000-Next
+- Separación clara de capas (API, lógica, persistencia).
+- Modelo de datos que conserva trazabilidad por S/N y audit log inmutable.
+- Sincronización eventual entre nodos con mecanismos de reconciliación.
+- Diseño pensado para migración de datos desde SL2000: herramientas ETL y procesos de reconciliación.
+- Cumplimiento de requisitos de seguridad (PECAL, ENS como referencia institucional).
 
-## ⚙️ Arquitectura Técnica
-> **Nota:** Esta arquitectura debe ser consistente con `README.md`.
+## Entidades críticas (resumen)
+- **Item**: nsn, part_number, description, unit_of_issue, lifecycle_code.
+- **StockRecord**: item_id, location_id, serial_number (S/N), qty, status, last_inventory_date.
+- **WorkOrder**: id, item_id, serial_number, assigned_technician_id, status, planned_date, completion_date.
+- **MaintenanceRecord**: workorder_id, actions_taken, parts_used, time_spent, technician_id.
+- **PurchaseRequest / Order**: requester_id, item_id, qty, priority, supplier_id, status.
+- **AuditLog**: entity, entity_id, action, user_id, timestamp, previous_state.
 
-- **Frontend:** React + Vite
-- **Backend:** Node.js (TypeScript) + Express/Fastify
-- **Base de datos:** PostgreSQL + Prisma ORM
-- **Mensajería / sincronización:** RabbitMQ / Kafka
-- **Autenticación:** OpenID Connect + Keycloak
-- **Infraestructura:** Docker + Kubernetes + CI/CD
-- **Documentación API:** OpenAPI 3.1
+## Flujo de alto nivel
+1. Requisición → Aprobación → Orden de compra → Recepción → Integración en stock → Asignación a OT (si aplica) → Mantenimiento → Historial.
+2. Nodo local puede operar offline; al reconectar envía eventos a la central (mensajería) para reconciliación.
 
----
+## Requisitos no funcionales
+- Disponibilidad objetivo para prototipo: alta, diseñable para HA (replicas, backups).
+- Latencia: consultas de inventario < 200ms en condiciones nominales (objetivo de diseño).
+- Seguridad: TLS everywhere, RBAC, MFA para roles con privilegios.
+- Auditoría: logs inmutables con retención configurable.
 
-## 🧩 Estructura del Proyecto
+## Tareas inmediatas para la IA/desarrollador
+1. Generar esquema ER inicial y migraciones (PostgreSQL).
+2. Crear OpenAPI para Items y StockRecord.
+3. Implementar servicio backend básico (auth + CRUD Items + CRUD StockRecord).
+4. UI mínima (React) con listado y filtros.
+5. Mecanismo simple de mensajería (RabbitMQ local) para pruebas de sincronización.
 
-SL2000-Next/
-├── backend/
-│ ├── src/
-│ ├── tests/
-│ ├── package.json
-│ └── Dockerfile
-│
-├── frontend/
-│ ├── src/
-│ ├── public/
-│ ├── vite.config.js
-│ ├── package.json
-│ └── Dockerfile
-│
-├── docs/
-│ ├── architecture.md
-│ └── data_model.png
-│
-├── openapi/
-│ └── openapi.yaml
-│
-├── infra/
-│ ├── docker-compose.yml
-│ └── kubernetes/
-│
-├── README.md
-└── agent.md
+## Migración / ETL
+- Preparar scripts ETL para transformar esquemas legacy (PowerBuilder/DB locales) a esquema central.
+- Diseñar utilidades de reconciliación y reportes de variación.
 
----
+## Pautas operativas
+- Antes de integrar datos reales: revisión SINFOSEC y autorización administrativa.
+- Para pruebas: usar datos dummy y entornos aislados.
 
-## 🤖 Instrucciones para IAs Colaboradoras
-
-**Rol del Agente IA:**
-- Asistir en la **generación, revisión y documentación del código.**
-- Proponer **mejoras estructurales** y **optimizaciones de rendimiento**.
-- Mantener coherencia entre **backend**, **frontend**, **base de datos** y la especificación **OpenAPI**.
-- Documentar automáticamente las rutas, esquemas y flujos críticos en JSDoc y Markdown.
-- Evitar la generación de datos sensibles o reales relacionados con defensa.
-
-**Pautas de desarrollo:**
-- Mantener una arquitectura **limpia y modular**.
-- Aplicar principios **SOLID y DRY**.
-- Comentar el código clave y generar documentación JSDoc para funciones y clases.
-- Validar todas las entradas de la API y sanitizar los datos.
-- Priorizar **seguridad**, **rendimiento** y **mantenibilidad**.
+## Referencias (resumen integrado)
+- Documento didáctico sobre SL2000 y SL2000E (resumen incluido en README).
+- Pliego técnico SL2000E (migración a arquitectura 3 capas y Oracle / Java; objetivo 2026).
+- Notas internas: centralización en servidores CESTIC y caducidad de plataformas legacy.
 
 ---
 
-## 🔐 Roles y Permisos
-
-| Rol | Descripción | Permisos principales |
-|-----|--------------|----------------------|
-| **Administrador** | Superusuario del sistema | CRUD completo de todos los módulos |
-| **Técnico** | Responsable de mantenimiento | Registro y actualización de operaciones |
-| **Operador** | Personal de apoyo o piloto | Lectura y solicitud de operaciones |
-| **Invitado** | Observador limitado | Lectura parcial de datos |
-
----
-
-## 🧠 Funcionalidades Clave
-
-- Gestión integral de aeronaves, vehículos y equipos.
-- Seguimiento de inventario, piezas y mantenimiento.
-- Registro de incidencias y reportes técnicos.
-- Panel de control con métricas en tiempo real.
-- Sistema de roles con autenticación JWT.
-- Exportación de datos (PDF, CSV).
-- Soporte multilingüe (ES/EN).
-
----
-
-## 🧩 Integraciones Futuras
-
-- API REST pública (para sistemas externos).
-- Módulo IA predictiva (fallos de mantenimiento).
-- Panel táctico para centros operativos.
-- Conexión segura con sistemas OTAN y EDA (entorno simulado).
-
----
-
-## 🧭 Flujo de Desarrollo
-
-1. Crear una rama por feature o módulo:  
-   `feature/nombre-modulo`
-2. Hacer commits descriptivos:  
-   `git commit -m "feat(mantenimiento): añade validación de incidencias"`
-3. Testear antes de hacer push:
-   ```bash
-   npm run test
-Crear Pull Request y solicitar revisión de IA o humano.
-
-📘 Estándares de Código
-Frontend: ESLint + Prettier + Hooks Rules
-
-Backend: Express + Sequelize ORM
-
-Testing: Jest + Supertest
-
-Commits: Conventional Commits
-
-Documentación: JSDoc + Markdown
-
-💡 Ejemplo de Tarea para la IA
-“Crea un módulo en el backend que gestione el inventario de piezas.
-Debe incluir rutas REST (GET, POST, PUT, DELETE), validación de datos,
-y conexión con PostgreSQL usando Sequelize.”
-
-🚀 Objetivo Final
-Desarrollar un sistema modular, seguro y escalable que sirva como base para futuras plataformas de gestión logística militar o civil, preservando la filosofía del SL2000 original con tecnología Next-Gen.
-
-🏷️ Metadatos del Proyecto
-Nombre: SL2000-Next
-
-Versión: 1.0.0
-
-Estado: En desarrollo (Pre-Alpha)
-
-Autor: Proyecto colaborativo IA + Humano
-
-Licencia: MIT (personalizable según uso institucional)
-
-yaml
-Copiar código
-
----
-
-¿Quieres que le añada también un **bloque YAML inicial (para agentes como GitHub Copilot o ChatGPT Code Interpreter)** que defina el contexto automáticamente?  
-Por ejemplo, algo así:
-
-```yaml
-# agent.yaml
-context: "Full-stack project: React + Node + PostgreSQL + Docker"
-objectives:
-  - "Recrear el sistema SL2000 del Ejército del Aire"
-  - "Seguridad, trazabilidad y modularidad"
-  - "IA colaborativa para desarrollo asistido"
+**Fin de AGENT.md**
